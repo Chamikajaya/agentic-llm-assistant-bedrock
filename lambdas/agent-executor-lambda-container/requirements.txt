@@ -7,3 +7,4 @@ langchain_postgres==0.0.9
 psycopg2-binary==2.9.9
 beautifulsoup4==4.12.3
 numexpr==2.10.0
+duckduckgo-search

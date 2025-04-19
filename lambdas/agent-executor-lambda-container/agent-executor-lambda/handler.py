@@ -1,7 +1,7 @@
 import logging
 import traceback
 import boto3
-from langchain.agents import AgentExecutor, create_xml_agent
+from langchain.agents import AgentExecutor, create_react_agent
 from assistant.prompts import CLAUDE_AGENT_PROMPT
 from assistant.tools import LLM_AGENT_TOOLS
 from langchain.chains import ConversationChain
@@ -74,11 +74,10 @@ def get_agentic_chatbot_conversation_chain(
         return_messages=False
     )
 
-    agent = create_xml_agent(
+    agent = create_react_agent(
         llm=claude_chat_llm,
         tools=LLM_AGENT_TOOLS,
         prompt=CLAUDE_AGENT_PROMPT,
-        stop_sequence=["</tool_input>", "</final_answer>"]
 
     )
 
