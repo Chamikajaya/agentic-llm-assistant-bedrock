@@ -22,7 +22,7 @@ bedrock_runtime = boto3.client("bedrock-runtime", region_name=config.bedrock_reg
 
 
 claude_chat_llm = ChatBedrock(
-    provider="anthropic",  # TODO: Later get this from the config - parameter store
+    provider=config.llm_model_provider, 
     model_id=config.llm_model_id,
     client=bedrock_runtime,
     model_kwargs={
@@ -112,7 +112,7 @@ def lambda_handler(event, context):
         ).invoke
     else:
         return {
-            "statusCode": 200,
+            "statusCode": 400,
             "response": (
                 f"The chatbot_type {chatbot_type} is not supported."
                 f" Please use chatbot_type: 'basic'"
