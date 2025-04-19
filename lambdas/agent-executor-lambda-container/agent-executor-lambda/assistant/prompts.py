@@ -1,5 +1,6 @@
 from datetime import datetime
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
+
 
 # Claude basic chatbot prompt construction
 date_today = str(datetime.today().date())
@@ -38,3 +39,62 @@ messages = [
 ]
 
 CLAUDE_PROMPT = ChatPromptTemplate.from_messages(messages)
+
+
+# ============================================================================
+# Claude agent prompt construction
+# 
+# The agentic mode uses the ReAct (Reason and Act) framework, which enables the LLM to:
+
+# 1) Think about the problem
+# 2) Choose an Action (tool) to use
+# 3) Provide Action Input (parameters for the tool)
+# 4) Process the Observation (tool output)
+# 5) Repeat steps 1-4 until it has enough information
+# 6) Deliver the Final Answer
+# 
+# 
+# =========================================
+
+CLAUDE_AGENT_PROMPT_TEMPLATE = f"""\n
+Human: The following is a conversation between a human and an AI assistant.
+The assistant is polite, and responds to the user input and questions accurately and concisely.
+The assistant remains on the topic and leverage available options efficiently.
+The date today is {date_today}.
+
+You will play the role of the assistant.
+You have access to the following tools:
+
+{{tools}}
+
+You must reason through the question using the following format:
+
+Question: The question found below which you must answer
+Thought: you should always think about what to do
+Action: the action to take, must be one of [{{tool_names}}]
+Action Input: the input to the action
+Observation: the result of the action
+... (this Thought/Action/Action Input/Observation can repeat N times)
+Thought: I now know the final answer
+Final Answer: the final answer to the original input question
+
+Remember to respond with your knowledge when the question does not correspond to any available action.
+
+The conversation history is within the <chat_history> XML tags below, where Hu refers to human and AI refers to the assistant:
+<chat_history>
+{{chat_history}}
+</chat_history>
+
+Begin!
+
+Question: {{input}}
+
+Assistant:
+{{agent_scratchpad}}
+"""
+
+
+# Using PromptTemplate instead of ChatPromptTemplate because ReAct framework requires specific formatting with "Thought:", "Action:", etc. fields that are easier to implement as a single template string
+CLAUDE_AGENT_PROMPT = PromptTemplate.from_template(
+    CLAUDE_AGENT_PROMPT_TEMPLATE
+)
